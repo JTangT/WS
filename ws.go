@@ -35,15 +35,16 @@ func LoadWSRules(i string){
 	}
 	Setting.mu.RUnlock()
 
-	http.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) {
+	Router := http.NewServeMux()
+	Router.HandleFunc("/",func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(404)
 		io.WriteString(w,Page404)
 		return
 	})
-	http.Handle("/ws/",websocket.Handler(func(ws *websocket.Conn){
+	Router.Handle("/ws/",websocket.Handler(func(ws *websocket.Conn){
 		WS_Handle(i,ws)
 	}))
-	http.Serve(ln,nil)
+	http.Serve(ln,Router)
 }
 
 func WS_Handle(i string , ws *websocket.Conn){
