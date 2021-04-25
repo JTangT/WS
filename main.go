@@ -1,43 +1,42 @@
 package main
 
 import (
-	"WebSocket_TCP/zlog"
+	"github.com/CoiaPrant/zlog"
 	"encoding/json"
 	"flag"
-	"net"
-	"io/ioutil"
 	"io"
-	"syscall"
+	"io/ioutil"
+	"net"
 	"os"
 	"os/signal"
 	"sync"
+	"syscall"
 )
 
 type Rule struct {
-	Port string
-	Address string
+	Port                 string
+	Address              string
 	ProxyProtocolVersion int
 }
 
 type Config struct {
-	mu sync.RWMutex
-	Mode string
+	mu    sync.RWMutex
+	Mode  string
 	Rules map[string]Rule
 }
 
 var ConfigFile string
 var Setting Config
 
-func main(){
+func main() {
 	flag.StringVar(&ConfigFile, "config", "config.json", "The config file location.")
 	help := flag.Bool("h", false, "Show help")
-    flag.Parse()
+	flag.Parse()
 
-		if *help {
-			flag.PrintDefaults()
-			os.Exit(0)
-		}
-
+	if *help {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
 
 	conf, err := ioutil.ReadFile(ConfigFile)
 	if err != nil {
@@ -51,10 +50,10 @@ func main(){
 	}
 
 	if Setting.Mode == "Server" {
-        go LoadServer()
-	}else if Setting.Mode == "Client" {
-        go LoadClient()
-	}else{
+		go LoadServer()
+	} else if Setting.Mode == "Client" {
+		go LoadClient()
+	} else {
 		zlog.Fatal("Json Error: Unknow Mode")
 		os.Exit(0)
 	}
@@ -70,20 +69,20 @@ func main(){
 	zlog.PrintText("Exiting\n")
 }
 
-func LoadServer(){
+func LoadServer() {
 	for index, _ := range Setting.Rules {
-	    go LoadWSRules(index) 
+		go LoadWSRules(index)
 	}
 }
 
-func LoadClient(){
+func LoadClient() {
 	for index, _ := range Setting.Rules {
-	    go LoadWSCRules(index)
+		go LoadWSCRules(index)
 	}
 }
 
-func net_copyIO(src,dest net.Conn){
-defer src.Close()
-defer dest.Close()
-io.Copy(src,dest)
+func net_copyIO(src, dest net.Conn) {
+	defer src.Close()
+	defer dest.Close()
+	io.Copy(src, dest)
 }

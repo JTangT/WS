@@ -1,7 +1,7 @@
 package main
 
 import (
-	"WebSocket_TCP/zlog"
+	"github.com/CoiaPrant/zlog"
 	"net/http"
 	"net"
 	"golang.org/x/net/websocket"
