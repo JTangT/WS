@@ -1,16 +1,17 @@
 {
-    "Mode" : "Server or Client", 
-    "Rules" : {
-        "1" : {
-            "Port" : "1",
-            "Address" : "example.com:1234",
-            "ProxyProtocolVersion" : 0
+    "Mode": "Server or Client",
+    "Rules": {
+        "1": {
+            "TLS": true,
+            "Port": "1",
+            "Address": "example.com:1234",
+            "ProxyProtocolVersion": 0
         },
-        "2" : {
-            "Port" : "2",
-            "Address" : "example.com:1234",
-            "ProxyProtocolVersion" : 0
+        "2": {
+            "TLS": false,
+            "Port": "2",
+            "Address": "http://example.com:1234",
+            "ProxyProtocolVersion": 0
         }
     }
-
 }
