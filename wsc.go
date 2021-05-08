@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/CoiaPrant/zlog"
-	"golang.org/x/net/websocket"
+	"crypto/tls"
 	"net"
 	"strings"
+
+	"github.com/CoiaPrant/zlog"
+	"golang.org/x/net/websocket"
 )
 
 func LoadWSCRules(i string) {
@@ -45,6 +47,7 @@ func wsc_handleRequest(conn net.Conn, r Rule) {
 
 	if r.TLS {
 		ws_config, err = websocket.NewConfig("wss://"+r.Address+"/ws/", "https://"+r.Address+"/ws/")
+		ws_config.TlsConfig = &tls.Config{InsecureSkipVerify: true}
 	} else {
 		ws_config, err = websocket.NewConfig("ws://"+r.Address+"/ws/", "http://"+r.Address+"/ws/")
 	}
