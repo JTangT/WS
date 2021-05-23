@@ -9,10 +9,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func LoadWSCRules(i string) {
-	Setting.mu.RLock()
-	rule := Setting.Rules[i]
-	Setting.mu.RUnlock()
+func LoadWSCRules(i string, rule Rule) {
 	tcpaddress, _ := net.ResolveTCPAddr("tcp", ":"+rule.Port)
 
 	ln, err := net.ListenTCP("tcp", tcpaddress)
@@ -32,11 +29,6 @@ func LoadWSCRules(i string) {
 			}
 			break
 		}
-
-		Setting.mu.RLock()
-		rule := Setting.Rules[i]
-		Setting.mu.RUnlock()
-
 		go wsc_handleRequest(conn, rule)
 	}
 }

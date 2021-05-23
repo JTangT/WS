@@ -22,10 +22,7 @@ func (this *Addr) String() string {
 	return this.NetworkString
 }
 
-func LoadWSRules(i string) {
-	Setting.mu.RLock()
-	rule := Setting.Rules[i]
-	Setting.mu.Unlock()
+func LoadWSRules(i string, rule Rule) {
 	tcpaddress, _ := net.ResolveTCPAddr("tcp", ":"+rule.Port)
 	ln, err := net.ListenTCP("tcp", tcpaddress)
 	if err == nil {
@@ -42,7 +39,7 @@ func LoadWSRules(i string) {
 		return
 	})
 	Router.Handle("/ws/", websocket.Handler(func(ws *websocket.Conn) {
-		WS_Handle(i, ws)
+		WS_Handle(rule, ws)
 	}))
 	if rule.TLS {
 		http.ServeTLS(ln, Router, certFile, keyFile)
@@ -51,12 +48,7 @@ func LoadWSRules(i string) {
 	}
 }
 
-func WS_Handle(i string, ws *websocket.Conn) {
-	ws.PayloadType = websocket.BinaryFrame
-	Setting.mu.RLock()
-	rule := Setting.Rules[i]
-	Setting.mu.RUnlock()
-
+func WS_Handle(rule Rule, ws *websocket.Conn) {
 	conn, err := net.Dial("tcp", rule.Address)
 	if err != nil {
 		ws.Close()

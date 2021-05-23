@@ -16,7 +16,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 )
@@ -29,7 +28,6 @@ type Rule struct {
 }
 
 type Config struct {
-	mu    sync.RWMutex
 	Mode  string
 	Rules map[string]Rule
 }
@@ -69,26 +67,21 @@ func main() {
 		os.Exit(0)
 	}
 
-	sigs := make(chan os.Signal, 1)
-	done := make(chan bool, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-sigs
-		done <- true
-	}()
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 	<-done
 	zlog.PrintText("Exiting\n")
 }
 
 func LoadServer() {
-	for index, _ := range Setting.Rules {
-		go LoadWSRules(index)
+	for index, r := range Setting.Rules {
+		go LoadWSRules(index,r)
 	}
 }
 
 func LoadClient() {
-	for index, _ := range Setting.Rules {
-		go LoadWSCRules(index)
+	for index, r := range Setting.Rules {
+		go LoadWSCRules(index,r)
 	}
 }
 
