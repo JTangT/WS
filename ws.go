@@ -56,10 +56,10 @@ func WS_Handle(rule Rule, ws *websocket.Conn) {
 	}
 
 	if rule.ProxyProtocolVersion != 0 {
-		header := proxyprotocol.HeaderProxyFromAddrs(byte(rule.ProxyProtocolVersion), &Addr{
+		header := proxyprotocol.HeaderProxyFromAddrs(byte(rule.ProxyProtocolVersion), conn.LocalAddr(), &Addr{
 			NetworkType:   ws.Request().Header.Get("X-Forward-Protocol"),
 			NetworkString: ws.Request().Header.Get("X-Forward-Address"),
-		}, conn.LocalAddr())
+		})
 		header.WriteTo(conn)
 	}
 	go copyIO(ws, conn)

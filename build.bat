@@ -1,9 +1,7 @@
 @echo off
 set UserName=CoiaPrant
 set Name=WebSocket_TCP
-set Version=1.0.4
-
-echo %Version%>version
+set Version=1.0.5
 
 if exist dist (
     del /F /S /Q dist
