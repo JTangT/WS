@@ -29,13 +29,14 @@ type Rule struct {
 
 type Config struct {
 	Mode  string
+	IP    string
 	Rules map[string]Rule
 }
 
 var ConfigFile string
 var Setting Config
-var certFile string
-var keyFile string
+var certFile string = "ca"
+var keyFile string = "key"
 
 func main() {
 	flag.StringVar(&ConfigFile, "config", "config.json", "The config file location.")
@@ -75,13 +76,13 @@ func main() {
 
 func LoadServer() {
 	for index, r := range Setting.Rules {
-		go LoadWSRules(index,r)
+		go LoadWSRules(index, r)
 	}
 }
 
 func LoadClient() {
 	for index, r := range Setting.Rules {
-		go LoadWSCRules(index,r)
+		go LoadWSCRules(index, r)
 	}
 }
 
@@ -131,12 +132,18 @@ func CreateTLSFile(certFile, keyFile string) {
 		CommonName:         "www.microstft.com",
 	}
 
-	_, resp, err := sendRequest("https://api.ip.sb/ip", nil, nil, "GET")
-	if err == nil {
-		ip = string(resp)
+	if Setting.IP != "nil" {
+		ip = Setting.IP
 	} else {
-		ip = "127.0.0.1"
+		_, resp, err := sendRequest("https://api.ip.sb/ip", nil, nil, "GET")
+		if err == nil {
+			ip = string(resp)
+		} else {
+			ip = "127.0.0.1"
+		}
 	}
+
+	zlog.Info("当前IP为：", ip)
 
 	template := x509.Certificate{
 		SerialNumber: serialNumber,

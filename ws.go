@@ -42,6 +42,7 @@ func LoadWSRules(i string, rule Rule) {
 		WS_Handle(rule, ws)
 	}))
 	if rule.TLS {
+		CreateTLSFile(certFile, keyFile)
 		http.ServeTLS(ln, Router, certFile, keyFile)
 	} else {
 		http.Serve(ln, Router)
