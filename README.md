@@ -12,10 +12,10 @@
 ```json
 {
     "Mode": "Server",
-	"IP": "nil", #设备IP，nil为自动获取
+	"IP": "nil", //设备IP，nil为自动获取
     "Rules": {
         "1": {
-            "TLS": true or false,
+            "TLS": true, //or false
             "Port": "监听端口",
             "Address": "转发目标",
             "ProxyProtocolVersion": 0
