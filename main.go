@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -137,7 +138,7 @@ func CreateTLSFile(certFile, keyFile string) {
 	} else {
 		_, resp, err := sendRequest("https://api.ip.sb/ip", nil, nil, "GET")
 		if err == nil {
-			ip = string(resp)
+			ip = strings.ReplaceAll(string(resp), "\n", "")
 		} else {
 			ip = "127.0.0.1"
 		}
